@@ -1,0 +1,41 @@
+{
+  "name": "tech-pk-backend",
+  "version": "1.0.0",
+  "description": "Backend API for TECH.PK - Premium Electronics E-Commerce Platform",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node data/seeder.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --detectOpenHandles",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
+  },
+  "keywords": ["ecommerce", "electronics", "api", "express", "mongodb"],
+  "author": "TECH.PK",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.0.3",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express-validator": "^7.0.1",
+    "multer": "^1.4.5-lts.1",
+    "dotenv": "^16.3.1",
+    "cookie-parser": "^1.4.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "mongodb-memory-server": "^9.1.6"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": ["**/tests/**/*.test.js"],
+    "verbose": true,
+    "testTimeout": 30000,
+    "transform": {}
+  }
+}
