@@ -41,12 +41,16 @@ app.use(
     cors({
         origin: function (origin, callback) {
             if (!origin) return callback(null, true);
+            // Allow exact matches
             if (allowedOrigins.indexOf(origin) !== -1) {
-                callback(null, true);
-            } else {
-                console.log('❌ CORS blocked:', origin);
-                callback(null, true); // Allow for debugging
+                return callback(null, true);
             }
+            // Allow Vercel preview deployments
+            if (origin.includes('vercel.app') || origin.includes('localhost')) {
+                return callback(null, true);
+            }
+            console.log('❌ CORS blocked:', origin);
+            callback(null, true); // Allow for debugging
         },
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
