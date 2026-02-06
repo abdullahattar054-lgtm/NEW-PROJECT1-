@@ -11,7 +11,13 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --detectOpenHandles",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
   },
-  "keywords": ["ecommerce", "electronics", "api", "express", "mongodb"],
+  "keywords": [
+    "ecommerce",
+    "electronics",
+    "api",
+    "express",
+    "mongodb"
+  ],
   "author": "TECH.PK",
   "license": "MIT",
   "dependencies": {
@@ -23,7 +29,8 @@
     "express-validator": "^7.0.1",
     "multer": "^1.4.5-lts.1",
     "dotenv": "^16.3.1",
-    "cookie-parser": "^1.4.6"
+    "cookie-parser": "^1.4.6",
+    "helmet": "^7.1.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",
@@ -33,7 +40,9 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": ["**/tests/**/*.test.js"],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
     "verbose": true,
     "testTimeout": 30000,
     "transform": {}
