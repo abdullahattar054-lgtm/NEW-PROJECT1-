@@ -12,6 +12,8 @@ import { errorHandler } from './middleware/errorMiddleware.js';
 // Load env vars
 dotenv.config();
 
+app.set('trust proxy', 1);
+
 // Connect to database
 connectDB();
 
