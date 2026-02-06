@@ -4,6 +4,8 @@ import User from '../models/User.js';
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+// ... other functions (register, login, etc.)
+
 // @desc    Google OAuth Login
 // @route   POST /api/v1/auth/google
 // @access  Public
@@ -43,7 +45,7 @@ export const googleAuth = async (req, res) => {
                 avatar: picture,
                 googleId,
                 isEmailVerified: true,
-                password: Math.random().toString(36).slice(-8), // Random password
+                password: Math.random().toString(36).slice(-8),
             });
             console.log('✅ New user created:', email);
         } else {

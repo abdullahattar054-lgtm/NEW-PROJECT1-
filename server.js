@@ -18,19 +18,19 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 
-// Load env vars FIRST
+// Load env vars
 dotenv.config();
 
-// Create Express app
+// Create app
 const app = express();
 
 // Trust proxy
 app.set('trust proxy', 1);
 
-// Connect to database
+// Connect DB
 connectDB();
 
-// CORS Configuration - MOST IMPORTANT
+// CORS - CRITICAL FIX
 const allowedOrigins = [
     'https://tech-pk-first.vercel.app',
     'http://localhost:5173',
@@ -40,30 +40,27 @@ const allowedOrigins = [
 app.use(
     cors({
         origin: function (origin, callback) {
-            // Allow requests with no origin (mobile apps, Postman)
             if (!origin) return callback(null, true);
-
             if (allowedOrigins.indexOf(origin) !== -1) {
                 callback(null, true);
             } else {
-                console.log('❌ CORS Blocked origin:', origin);
-                callback(null, true); // Temporarily allow all for debugging
+                console.log('❌ CORS blocked:', origin);
+                callback(null, true); // Allow for debugging
             }
         },
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
     })
 );
 
-// Preflight requests
 app.options('*', cors());
 
-// Security headers
+// Security
 app.use(
     helmet({
         crossOriginResourcePolicy: { policy: 'cross-origin' },
-        contentSecurityPolicy: false, // Disable for now to test
+        contentSecurityPolicy: false,
     })
 );
 
@@ -72,26 +69,24 @@ app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Sanitize data
+// Sanitize
 app.use(mongoSanitize());
 app.use(xss());
 
-// Rate limiting
+// Rate limit
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000,
     max: 100,
-    standardHeaders: true,
-    legacyHeaders: false,
 });
 app.use('/api', limiter);
 
-// Debug logging
+// Logging
 app.use((req, res, next) => {
-    console.log(`📡 [${req.method}] ${req.originalUrl} - Origin: ${req.headers.origin}`);
+    console.log(`📡 [${req.method}] ${req.originalUrl}`);
     next();
 });
 
-// Mount routes
+// Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/cart', cartRoutes);
@@ -100,47 +95,33 @@ app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/wishlist', wishlistRoutes);
 
-// Welcome route
+// Root
 app.get('/', (req, res) => {
     res.json({
         success: true,
-        message: 'Welcome to TECH.PK API',
+        message: 'TECH.PK API Running',
         version: '1.0.0',
-        timestamp: new Date().toISOString(),
     });
 });
 
-// Health check
+// Health
 app.get('/api/health', (req, res) => {
-    res.json({
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        env: process.env.NODE_ENV,
-    });
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// 404 handler
+// 404
 app.use('/api/*', (req, res) => {
-    res.status(404).json({
-        success: false,
-        message: `Route not found: ${req.originalUrl}`,
-    });
+    res.status(404).json({ success: false, message: `Not found: ${req.originalUrl}` });
 });
 
-// Error handler (must be last)
+// Error handler
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {
-        console.log(`
-      ╔═══════════════════════════════════════════════════════╗
-      ║   🚀 TECH.PK API Server Running                      ║
-      ║   📡 Port: ${PORT}                                    ║
-      ║   🌍 Environment: ${process.env.NODE_ENV || 'development'}            ║
-      ╚═══════════════════════════════════════════════════════╝
-      `);
+        console.log(`🚀 Server on port ${PORT}`);
     });
 }
 

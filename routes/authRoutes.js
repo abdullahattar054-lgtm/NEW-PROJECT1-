@@ -6,7 +6,7 @@ import {
     getMe,
     updateProfile,
     updatePassword,
-    addAddress,
+    addAddress
 } from '../controllers/authController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { validateRegistration, validateLogin, validate } from '../middleware/validationMiddleware.js';
