@@ -17,6 +17,9 @@ connectDB();
 
 const app = express();
 
+// Trust proxy (Required for Vercel/Heroku/AWS)
+app.set('trust proxy', 1);
+
 // Set security headers
 app.use(helmet());
 
