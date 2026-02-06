@@ -86,6 +86,14 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Catch-all 404 for API routes
+app.use('/api/*', (req, res) => {
+    res.status(404).json({
+        success: false,
+        message: `Route not found: ${req.originalUrl}`
+    });
+});
+
 // Error handler middleware (must be last)
 app.use(errorHandler);
 
