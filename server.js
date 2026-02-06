@@ -78,6 +78,11 @@ app.get('/', (req, res) => {
     });
 });
 
+// Health Check
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Error handler middleware (must be last)
 app.use(errorHandler);
 
