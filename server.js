@@ -9,24 +9,35 @@ import rateLimit from 'express-rate-limit';
 import connectDB from './config/db.js';
 import { errorHandler } from './middleware/errorMiddleware.js';
 
-// Load env vars
+// Load env vars FIRST
 dotenv.config();
 
+// Create Express app AFTER dotenv
+const app = express();
+
+// Trust proxy (Required for Vercel)
 app.set('trust proxy', 1);
 
 // Connect to database
 connectDB();
 
-const app = express();
-
-// Trust proxy (Required for Vercel/Heroku/AWS)
-app.set('trust proxy', 1);
-
-// Set security headers
-app.use(helmet());
+// Set security headers with proper config for Google OAuth
+app.use(
+    helmet({
+        crossOriginResourcePolicy: { policy: 'cross-origin' },
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                connectSrc: ["'self'", "https://accounts.google.com", "https://*.vercel.app"],
+                frameSrc: ["'self'", "https://accounts.google.com"],
+                imgSrc: ["'self'", "data:", "https:"],
+            },
+        },
+    })
+);
 
 // Body parser middleware
-app.use(express.json({ limit: '10kb' })); // Limit body size
+app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -37,23 +48,47 @@ app.use(xss());
 // Rate limiting
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
 });
 app.use('/api', limiter);
 
 // Debug Logging Middleware
 app.use((req, res, next) => {
     console.log(`📡 [${req.method}] ${req.originalUrl}`);
+    console.log('Origin:', req.headers.origin);
     next();
 });
 
-// CORS middleware
+// CORS Configuration - MOST IMPORTANT FIX
+const allowedOrigins = [
+    'https://tech-pk-first.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000',
+];
+
 app.use(
     cors({
-        origin: '*',
-        credentials: false,
+        origin: function (origin, callback) {
+            // Allow requests with no origin (mobile apps, Postman, etc.)
+            if (!origin) return callback(null, true);
+
+            if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+                callback(null, true);
+            } else {
+                console.log('❌ Blocked origin:', origin);
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+        exposedHeaders: ['set-cookie'],
     })
 );
+
+// Handle preflight requests
 app.options('*', cors());
 
 // Import routes
@@ -80,19 +115,24 @@ app.get('/', (req, res) => {
         success: true,
         message: 'Welcome to TECH.PK API',
         version: '1.0.0',
+        timestamp: new Date().toISOString(),
     });
 });
 
 // Health Check
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.json({
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        env: process.env.NODE_ENV
+    });
 });
 
 // Catch-all 404 for API routes
 app.use('/api/*', (req, res) => {
     res.status(404).json({
         success: false,
-        message: `Route not found: ${req.originalUrl}`
+        message: `Route not found: ${req.originalUrl}`,
     });
 });
 
