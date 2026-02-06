@@ -36,6 +36,12 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
+// Debug Logging Middleware
+app.use((req, res, next) => {
+    console.log(`📡 [${req.method}] ${req.originalUrl}`);
+    next();
+});
+
 // CORS middleware
 app.use(
     cors({
@@ -43,6 +49,7 @@ app.use(
         credentials: false,
     })
 );
+app.options('*', cors());
 
 // Import routes
 import authRoutes from './routes/authRoutes.js';
