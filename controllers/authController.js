@@ -1,5 +1,8 @@
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // @desc    Register new user
 // @route   POST /api/v1/auth/register
@@ -215,6 +218,83 @@ export const addAddress = async (req, res) => {
         res.json({
             success: true,
             data: user,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+// @desc    Google Login
+// @route   POST /api/v1/auth/google
+// @access  Public
+export const googleAuth = async (req, res) => {
+    try {
+        const { token } = req.body;
+        let name, email, picture, googleId;
+
+        // Try verifying as ID Token
+        try {
+            const ticket = await client.verifyIdToken({
+                idToken: token,
+                audience: process.env.GOOGLE_CLIENT_ID || '402759898682-vtrfq3m4siklnppkd1p749ogig0sncgj.apps.googleusercontent.com',
+            });
+            const payload = ticket.getPayload();
+            name = payload.name;
+            email = payload.email;
+            picture = payload.picture;
+            googleId = payload.sub;
+        } catch (idTokenError) {
+            // If ID Token verification fails, try as Access Token
+            const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (!response.ok) {
+                throw new Error('Invalid Google Token');
+            }
+
+            const data = await response.json();
+            name = data.name;
+            email = data.email;
+            picture = data.picture;
+            googleId = data.sub;
+        }
+
+        let user = await User.findOne({ email });
+
+        if (user) {
+            // Update googleId if missing
+            if (!user.googleId) {
+                user.googleId = googleId;
+                if (!user.avatar) user.avatar = picture;
+                await user.save();
+            }
+        } else {
+            // Create new user
+            user = await User.create({
+                name,
+                email,
+                googleId,
+                avatar: picture,
+                password: '', // No password for Google users
+            });
+        }
+
+        const jwtToken = generateToken(user._id, user.role);
+
+        res.json({
+            success: true,
+            token: jwtToken,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                avatar: user.avatar,
+            },
         });
     } catch (error) {
         res.status(500).json({

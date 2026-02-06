@@ -2,6 +2,7 @@ import express from 'express';
 import {
     register,
     login,
+    googleAuth,
     getMe,
     updateProfile,
     updatePassword,
