@@ -39,13 +39,8 @@ app.use('/api', limiter);
 // CORS middleware
 app.use(
     cors({
-        origin: [
-            'https://tech-pk-first.vercel.app',
-            'https://tech-pk-frontend.vercel.app',
-            'http://localhost:5173',
-            process.env.CLIENT_URL
-        ].filter(Boolean),
-        credentials: true,
+        origin: '*',
+        credentials: false,
     })
 );
 
