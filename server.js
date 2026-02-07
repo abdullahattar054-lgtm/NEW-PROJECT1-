@@ -1,5 +1,8 @@
-import express from 'express';
 import dotenv from 'dotenv';
+// Load env vars at the absolute top
+dotenv.config();
+
+import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -32,19 +35,21 @@ connectDB();
 
 // DB Middleware to ensure connection before processing
 const dbMiddleware = async (req, res, next) => {
-    // Only wait for connection on /api routes
-    if (req.originalUrl.startsWith('/api') && req.originalUrl !== '/api/health') {
-        try {
-            await connectDB();
-            if (mongoose.connection.readyState !== 1) {
-                return res.status(503).json({
-                    success: false,
-                    message: 'Database not ready. Please try again in 2 seconds.'
-                });
-            }
-        } catch (err) {
-            console.error('DB Middleware Error:', err);
+    // Skip DB check for OPTIONS (CORS preflight) and non-API routes
+    if (req.method === 'OPTIONS' || !req.originalUrl.startsWith('/api') || req.originalUrl === '/api/health') {
+        return next();
+    }
+
+    try {
+        await connectDB();
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(503).json({
+                success: false,
+                message: 'Database not ready. Please try again in 2 seconds.'
+            });
         }
+    } catch (err) {
+        console.error('DB Middleware Error:', err);
     }
     next();
 };
