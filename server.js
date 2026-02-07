@@ -30,6 +30,28 @@ app.set('trust proxy', 1);
 // Connect DB
 connectDB();
 
+// DB Middleware to ensure connection before processing
+const dbMiddleware = async (req, res, next) => {
+    // Only wait for connection on /api routes
+    if (req.originalUrl.startsWith('/api') && req.originalUrl !== '/api/health') {
+        try {
+            await connectDB();
+            if (mongoose.connection.readyState !== 1) {
+                return res.status(503).json({
+                    success: false,
+                    message: 'Database not ready. Please try again in 2 seconds.'
+                });
+            }
+        } catch (err) {
+            console.error('DB Middleware Error:', err);
+        }
+    }
+    next();
+};
+
+import mongoose from 'mongoose';
+app.use(dbMiddleware);
+
 // CORS - CRITICAL FIX
 const allowedOrigins = [
     'https://tech-pk-first.vercel.app',
@@ -110,8 +132,13 @@ app.get('/', (req, res) => {
 });
 
 // Health
-app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/api/health', async (req, res) => {
+    res.json({
+        status: 'ok',
+        db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+        readyState: mongoose.connection.readyState,
+        timestamp: new Date().toISOString()
+    });
 });
 
 // 404
