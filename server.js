@@ -146,17 +146,6 @@ app.get('/api/health', async (req, res) => {
     });
 });
 
-// Temporary Seed Route
-import { seedDatabase } from './data/seeder.js';
-app.get('/api/v1/seed', async (req, res) => {
-    try {
-        const result = await seedDatabase();
-        res.json(result);
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
 // 404
 app.use('/api/*', (req, res) => {
     res.status(404).json({ success: false, message: `Not found: ${req.originalUrl}` });
