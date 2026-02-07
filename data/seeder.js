@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import User from '../models/User.js';
 import Product from '../models/Product.js';
 import { sampleProducts } from './sampleProducts.js';
@@ -6,6 +8,17 @@ import connectDB from '../config/db.js';
 export const seedDatabase = async () => {
     try {
         await connectDB();
+
+        // Wait for connection to be ready if it's still connecting
+        let retries = 5;
+        while (mongoose.connection.readyState !== 1 && retries > 0) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            retries--;
+        }
+
+        if (mongoose.connection.readyState !== 1) {
+            throw new Error('Database connection failed to reach ready state');
+        }
 
         // Clear existing data
         await User.deleteMany();
@@ -34,7 +47,7 @@ export const seedDatabase = async () => {
         // Create products
         await Product.insertMany(sampleProducts);
 
-        console.log('✅ Created 12 custom products');
+        console.log('✅ Created products with variants');
 
         return { success: true, message: 'Database seeded successfully!' };
     } catch (error) {

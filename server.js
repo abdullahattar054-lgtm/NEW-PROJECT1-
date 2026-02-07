@@ -42,14 +42,24 @@ const dbMiddleware = async (req, res, next) => {
 
     try {
         await connectDB();
+
+        // If not ready, wait up to 3 seconds with retries
+        let retries = 3;
+        while (mongoose.connection.readyState !== 1 && retries > 0) {
+            console.log(`Waiting for DB connection... (${retries} retries left)`);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            retries--;
+        }
+
         if (mongoose.connection.readyState !== 1) {
             return res.status(503).json({
                 success: false,
-                message: 'Database not ready. Please try again in 2 seconds.'
+                message: 'Database connection timed out. Please refresh in a moment.'
             });
         }
     } catch (err) {
         console.error('DB Middleware Error:', err);
+        return res.status(500).json({ success: false, message: 'Database error' });
     }
     next();
 };
