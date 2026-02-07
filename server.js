@@ -21,12 +21,6 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 
-// Load env vars
-dotenv.config();
-
-// Create app
-const app = express();
-
 // Trust proxy
 app.set('trust proxy', 1);
 
