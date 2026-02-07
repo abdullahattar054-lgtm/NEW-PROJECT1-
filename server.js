@@ -21,6 +21,9 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 
+// Create app
+const app = express();
+
 // Trust proxy
 app.set('trust proxy', 1);
 
