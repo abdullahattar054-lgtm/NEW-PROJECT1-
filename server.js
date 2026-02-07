@@ -40,21 +40,23 @@ const allowedOrigins = [
 app.use(
     cors({
         origin: function (origin, callback) {
+            // Allow requests with no origin (like mobile apps or curl requests)
             if (!origin) return callback(null, true);
-            // Allow exact matches
-            if (allowedOrigins.indexOf(origin) !== -1) {
+
+            if (
+                allowedOrigins.indexOf(origin) !== -1 ||
+                origin.includes('vercel.app') ||
+                origin.includes('localhost')
+            ) {
                 return callback(null, true);
+            } else {
+                console.log('❌ CORS blocked:', origin);
+                return callback(new Error('Not allowed by CORS'));
             }
-            // Allow Vercel preview deployments
-            if (origin.includes('vercel.app') || origin.includes('localhost')) {
-                return callback(null, true);
-            }
-            console.log('❌ CORS blocked:', origin);
-            callback(null, true); // Allow for debugging
         },
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     })
 );
 
@@ -68,21 +70,20 @@ app.use(
     })
 );
 
-// Body parser
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Sanitize
-app.use(mongoSanitize());
-app.use(xss());
+// app.use(mongoSanitize());
+// app.use(xss());
 
 // Rate limit
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000,
     max: 100,
 });
-app.use('/api', limiter);
+// app.use('/api', limiter);
 
 // Logging
 app.use((req, res, next) => {

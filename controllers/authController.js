@@ -111,60 +111,84 @@ export const login = async (req, res) => {
 // @access  Public
 export const googleAuth = async (req, res) => {
     try {
-        const { credential } = req.body;
+        const { credential, accessToken } = req.body;
+        const token = credential || accessToken || req.body.token;
 
-        console.log('🔐 Google Auth Request Received');
-        console.log('Credential:', credential ? 'Present' : 'Missing');
+        console.log('📡 Google Auth Handshake Started');
 
-        if (!credential) {
+        if (!token) {
             return res.status(400).json({
                 success: false,
-                message: 'Google credential is required',
+                message: 'No Google token provided',
             });
         }
 
-        // Verify Google token
-        const ticket = await client.verifyIdToken({
-            idToken: credential,
-            audience: process.env.GOOGLE_CLIENT_ID,
-        });
+        let googleId, email, name, avatar;
 
-        const payload = ticket.getPayload();
-        const { email, name, picture, sub: googleId } = payload;
+        try {
+            // 1. Try verifying as ID Token (Credential)
+            const ticket = await client.verifyIdToken({
+                idToken: token,
+                audience: process.env.GOOGLE_CLIENT_ID,
+            });
+            const payload = ticket.getPayload();
+            googleId = payload.sub;
+            email = payload.email;
+            name = payload.name;
+            avatar = payload.picture;
+            console.log('🛡️ Verified via ID Token');
+        } catch (idErr) {
+            console.log('ℹ️ Not an ID Token, trying Access Token flow...');
+            // 2. Fallback to Access Token (fetching profile via Google API)
+            try {
+                const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`);
+                if (!response.ok) throw new Error('Failed to fetch user info from Google');
 
-        console.log('✅ Google Token Verified:', email);
+                const payload = await response.json();
+                googleId = payload.sub;
+                email = payload.email;
+                name = payload.name;
+                avatar = payload.picture;
+                console.log('🌐 Verified via Access Token');
+            } catch (accessErr) {
+                console.error('❌ Google Token Verification Failed:', idErr.message, accessErr.message);
+                return res.status(401).json({
+                    success: false,
+                    message: 'Invalid Google token',
+                });
+            }
+        }
 
-        // Check if user exists
+        console.log(`👤 Google User Authenticated: ${email}`);
+
+        // Find or create user
         let user = await User.findOne({ email });
 
-        if (!user) {
-            // Create new user
+        if (user) {
+            // Update existing user with googleId if not present
+            if (!user.googleId) {
+                user.googleId = googleId;
+                if (!user.avatar) user.avatar = avatar;
+                await user.save();
+                console.log('✅ Updated existing user with Google ID');
+            }
+        } else {
+            // Create new Google user
             user = await User.create({
                 name,
                 email,
-                avatar: picture,
                 googleId,
-                isEmailVerified: true,
-                password: Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8),
+                avatar,
+                password: Math.random().toString(36).slice(-12), // Dummy password for schema compliance
             });
-            console.log('✅ New user created:', email);
-        } else {
-            // Update existing user
-            if (!user.googleId) {
-                user.googleId = googleId;
-                user.isEmailVerified = true;
-                if (!user.avatar) user.avatar = picture;
-                await user.save();
-            }
-            console.log('✅ Existing user logged in:', email);
+            console.log('✅ Created new Google user');
         }
 
-        // Generate JWT token
-        const token = generateToken(user._id);
+        const jwtToken = generateToken(user._id);
 
         res.status(200).json({
             success: true,
-            token,
+            token: jwtToken,
             user: {
                 id: user._id,
                 name: user.name,
@@ -174,13 +198,30 @@ export const googleAuth = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error('❌ Google Auth Error:', error.message);
+        console.error('❌ Google Auth Critical Error:', error);
         res.status(500).json({
             success: false,
             message: 'Google authentication failed',
             error: error.message,
         });
     }
+};
+
+
+// @desc    Debug Auth Config
+// @route   GET /api/v1/auth/debug
+// @access  Public
+export const debugAuth = async (req, res) => {
+    res.status(200).json({
+        success: true,
+        env: {
+            GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? 'Present' : 'Missing',
+            GOOGLE_CLIENT_ID_VAL: process.env.GOOGLE_CLIENT_ID,
+            GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET ? 'Present' : 'Missing',
+            NODE_ENV: process.env.NODE_ENV,
+        },
+        message: 'Debug info'
+    });
 };
 
 // @desc    Get current logged in user

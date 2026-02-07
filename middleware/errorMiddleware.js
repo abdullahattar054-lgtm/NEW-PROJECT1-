@@ -2,9 +2,9 @@ export const errorHandler = (err, req, res, next) => {
     let error = { ...err };
     error.message = err.message;
 
-    // Log to console for dev
-    if (process.env.NODE_ENV === 'development') {
-        console.error(err);
+    // Log to console for dev (and debugging prod)
+    if (true || process.env.NODE_ENV === 'development') {
+        console.error('🔥 Global Error Handler Caught:', err);
     }
 
     // Mongoose bad ObjectId
@@ -28,8 +28,9 @@ export const errorHandler = (err, req, res, next) => {
     res.status(error.statusCode || 500).json({
         success: false,
         message:
-            process.env.NODE_ENV === 'development'
+            process.env.NODE_ENV === 'development' || true
                 ? error.message || 'Server Error'
                 : 'An error occurred. Please try again later.',
+        stack: process.env.NODE_ENV === 'development' || true ? err.stack : undefined,
     });
 };
