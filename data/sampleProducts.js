@@ -1,201 +1,158 @@
 export const sampleProducts = [
     {
-        name: "Premium Wireless Earbuds Pro",
-        category: "Earbuds",
-        price: 199,
-        originalPrice: 249,
-        brand: "TechSound Pro",
-        description: "Premium wireless earbuds with active noise cancellation, 30-hour battery life, and crystal-clear audio quality. IPX7 water-resistant with touch controls.",
-        colors: [
-            {
-                name: "Black",
-                value: "#000000",
-                colorCode: "#1A1A1A",
-                images: [
-                    "/images/products/black-earbuds-pro.jpg"
-                ]
-            },
-            {
-                name: "Light Blue",
-                value: "#87CEEB",
-                colorCode: "#4FA3D1",
-                images: [
-                    "/images/products/light-blue-earbuds.jpeg"
-                ]
-            },
-            {
-                name: "White",
-                value: "#FFFFFF",
-                colorCode: "#F5F5F5",
-                images: [
-                    "/images/products/white-earbuds-pro.jpg"
-                ]
-            }
-        ],
-        images: [
-            "/images/products/black-earbuds-pro.jpg"
-        ],
-        specifications: {
-            batteryLife: "30 hours with case",
-            bluetooth: "Bluetooth 5.3",
-            waterResistance: "IPX7",
-            noiseCancellation: "Active ANC",
-            weight: "4.5g per earbud"
-        },
-        stock: 50,
-        featured: true,
-        ratings: {
-            average: 4.5,
-            count: 128
-        },
-        status: 'active'
-    },
-    {
-        name: "Gaming Headphones Pro",
+        name: "Black Headphones Pro",
         category: "Headphones",
-        price: 299,
-        originalPrice: 349,
-        brand: "GameSound Elite",
-        description: "Professional gaming headphones with 7.1 surround sound, RGB lighting, and ultra-comfortable memory foam ear cushions. Perfect for extended gaming sessions.",
-        colors: [
-            {
-                name: "Black/Green",
-                value: "#00FF00",
-                colorCode: "#2ECC40",
-                images: [
-                    "/images/products/black-green-headphones.png"
-                ]
-            }
-        ],
-        images: [
-            "/images/products/black-green-headphones.png"
-        ],
-        specifications: {
-            driver: "50mm Neodymium",
-            frequency: "20Hz - 20kHz",
-            impedance: "32 Ohm",
-            cable: "2m detachable",
-            microphone: "Noise-cancelling boom mic"
-        },
-        stock: 35,
+        price: 249,
+        originalPrice: 299,
+        brand: "TechSound Elite",
+        description: "Professional grade wireless headphones featuring advanced active noise cancellation and 40-hour battery life.",
+        images: ["/images/products/black-headphones-pro.png"],
+        stock: 45,
         featured: true,
-        ratings: {
-            average: 4.7,
-            count: 89
-        },
+        ratings: { average: 4.8, count: 156 },
         status: 'active'
     },
     {
-        name: "Studio Monitor Headphones",
+        name: "Black Headphones Premium",
         category: "Headphones",
         price: 349,
         originalPrice: 399,
-        brand: "StudioPro Elite",
-        description: "Professional studio monitor headphones with flat frequency response for accurate audio reproduction. Ideal for music production and mixing.",
-        colors: [
-            {
-                name: "White/Red",
-                value: "#FF0000",
-                colorCode: "#E74C3C",
-                images: [
-                    "/images/products/white-red-headphones.png"
-                ]
-            }
-        ],
-        images: [
-            "/images/products/white-red-headphones.png"
-        ],
-        specifications: {
-            driver: "45mm",
-            frequency: "15Hz - 28kHz",
-            impedance: "35 Ohm",
-            cable: "3m coiled cable",
-            design: "Over-ear closed-back"
-        },
-        stock: 25,
+        brand: "TechSound Gold",
+        description: "Studio-quality audio in a sleek black finish. Experience pure sound with zero distortion.",
+        images: ["/images/products/black-headphones-premium.png"],
+        stock: 30,
         featured: true,
-        ratings: {
-            average: 4.8,
-            count: 56
-        },
+        ratings: { average: 4.9, count: 89 },
         status: 'active'
     },
     {
-        name: "SmartWatch Pro Series",
-        category: "Smartwatches",
+        name: "Red Headphones Sport",
+        category: "Headphones",
+        price: 189,
+        originalPrice: 229,
+        brand: "ActiveTech",
+        description: "Bold design meets powerful bass. Perfect for your workout and everyday commute.",
+        images: ["/images/products/red-headphones.png"],
+        stock: 60,
+        featured: false,
+        ratings: { average: 4.6, count: 92 },
+        status: 'active'
+    },
+    {
+        name: "Premium Over-Ear Headphones (White)",
+        category: "Headphones",
         price: 299,
         originalPrice: 349,
-        brand: "TechWatch",
-        description: "Advanced smartwatch with comprehensive health tracking, GPS, heart rate monitoring, and 7-day battery life. Compatible with iOS and Android.",
-        colors: [
-            {
-                name: "Graphite",
-                value: "#2C2C2C",
-                colorCode: "#1A1A1A",
-                images: [
-                    "/images/products/black-smart-watch.jpg"
-                ]
-            },
-            {
-                name: "White",
-                value: "#FFFFFF",
-                colorCode: "#F5F5F5",
-                images: [
-                    "/images/products/white-smart-watch.png"
-                ]
-            }
-        ],
-        images: [
-            "/images/products/black-smart-watch.jpg"
-        ],
-        specifications: {
-            display: "1.9\" AMOLED",
-            battery: "7 days typical use",
-            waterResistance: "5ATM",
-            sensors: "Heart rate, SpO2, GPS",
-            connectivity: "Bluetooth 5.2, WiFi"
-        },
-        stock: 40,
+        brand: "Elegance Audio",
+        description: "Luxurious white over-ear headphones with memory foam cushions and superior soundstage.",
+        images: ["/images/products/white-headphones-premium.png"],
+        stock: 25,
         featured: true,
-        ratings: {
-            average: 4.6,
-            count: 203
-        },
+        ratings: { average: 4.7, count: 210 },
         status: 'active'
     },
     {
-        name: "Essential Wireless Earbuds",
+        name: "Grey Smartwatch Pro",
+        category: "Smartwatches",
+        price: 199,
+        originalPrice: 249,
+        brand: "TechWatch",
+        description: "Elegant grey smartwatch with comprehensive health tracking and a 1.9-inch AMOLED display.",
+        images: ["/images/products/grey-smartwatch.png"],
+        stock: 50,
+        featured: true,
+        ratings: { average: 4.5, count: 120 },
+        status: 'active'
+    },
+    {
+        name: "Orange Smartwatch Active",
+        category: "Smartwatches",
+        price: 179,
+        originalPrice: 219,
+        brand: "SportTech",
+        description: "Vibrant orange band with rugged build, GPS, and advanced heart rate monitoring.",
+        images: ["/images/products/orange-smartwatch.png"],
+        stock: 40,
+        featured: true,
+        ratings: { average: 4.6, count: 85 },
+        status: 'active'
+    },
+    {
+        name: "Black Smartwatch Compact",
+        category: "Smartwatches",
+        price: 159,
+        originalPrice: 199,
+        brand: "TechWatch Lite",
+        description: "Minimalist black smartwatch for everyday connectivity and style. 7-day battery life.",
+        images: ["/images/products/black-smartwatch-compact.jpg"],
+        stock: 75,
+        featured: false,
+        ratings: { average: 4.4, count: 230 },
+        status: 'active'
+    },
+    {
+        name: "White Smartwatch Essence",
+        category: "Smartwatches",
+        price: 189,
+        originalPrice: 239,
+        brand: "TechWatch Premium",
+        description: "Beautiful white smartwatch with a crisp circular display and premium feel.",
+        images: ["/images/products/white-smartwatch-essence.png"],
+        stock: 35,
+        featured: true,
+        ratings: { average: 4.7, count: 145 },
+        status: 'active'
+    },
+    {
+        name: "Black Earbuds Pro",
+        category: "Earbuds",
+        price: 129,
+        originalPrice: 159,
+        brand: "SoundBuds",
+        description: "Deep bass, clear highs, and perfect fit. Premium black earbuds for music lovers.",
+        images: ["/images/products/black-earbuds-pro-new.jpg"],
+        stock: 100,
+        featured: true,
+        ratings: { average: 4.8, count: 320 },
+        status: 'active'
+    },
+    {
+        name: "White Earbuds Pro",
+        category: "Earbuds",
+        price: 129,
+        originalPrice: 159,
+        brand: "SoundBuds",
+        description: "Minimalist white earbuds with transparency mode and water resistance.",
+        images: ["/images/products/white-earbuds-pro-new.jpg"],
+        stock: 80,
+        featured: true,
+        ratings: { average: 4.8, count: 280 },
+        status: 'active'
+    },
+    {
+        name: "Light Blue Earbuds",
         category: "Earbuds",
         price: 99,
         originalPrice: 129,
-        brand: "TechSound",
-        description: "Reliable wireless earbuds with great sound quality and 20-hour battery life. Perfect for everyday use.",
-        colors: [
-            {
-                name: "White",
-                value: "#FFFFFF",
-                colorCode: "#F5F5F5",
-                images: [
-                    "/images/products/white-earbuds.png"
-                ]
-            }
-        ],
-        images: [
-            "/images/products/white-earbuds.png"
-        ],
-        specifications: {
-            batteryLife: "20 hours with case",
-            bluetooth: "Bluetooth 5.1",
-            waterResistance: "IPX4",
-            noiseCancellation: "Passive",
-            weight: "4g per earbud"
-        },
-        stock: 100,
+        brand: "ColorBuds",
+        description: "Unique light blue shade with impressive audio performance and ergonomic design.",
+        images: ["/images/products/light-blue-earbuds-new.jpeg"],
+        stock: 120,
         featured: false,
-        ratings: {
-            average: 4.2,
-            count: 75
-        },
+        ratings: { average: 4.5, count: 110 },
+        status: 'active'
+    },
+    {
+        name: "White Earbuds Essence",
+        category: "Earbuds",
+        price: 119,
+        originalPrice: 149,
+        brand: "SoundBuds Lite",
+        description: "Crystal clear sound in a lightweight package. The essence of premium audio.",
+        images: ["/images/products/white-earbuds-essence.png"],
+        stock: 90,
+        featured: true,
+        ratings: { average: 4.7, count: 195 },
         status: 'active'
     }
 ];

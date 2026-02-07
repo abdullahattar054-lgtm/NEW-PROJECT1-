@@ -1,13 +1,9 @@
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import User from '../models/User.js';
 import Product from '../models/Product.js';
 import { sampleProducts } from './sampleProducts.js';
 import connectDB from '../config/db.js';
 
-dotenv.config();
-
-const seedDatabase = async () => {
+export const seedDatabase = async () => {
     try {
         await connectDB();
 
@@ -34,23 +30,22 @@ const seedDatabase = async () => {
         });
 
         console.log('✅ Created users');
-        console.log('   Admin: admin@tech.pk / Admin@123');
-        console.log('   User: user@tech.pk / User@123');
 
         // Create products
         await Product.insertMany(sampleProducts);
 
-        console.log('✅ Created 15 sample products');
-        console.log('   - 5 Headphones');
-        console.log('   - 5 Earbuds');
-        console.log('   - 5 Smartwatches');
+        console.log('✅ Created 12 custom products');
 
-        console.log('\n🎉 Database seeded successfully!');
-        process.exit(0);
+        return { success: true, message: 'Database seeded successfully!' };
     } catch (error) {
         console.error('❌ Error seeding database:', error);
-        process.exit(1);
+        throw error;
     }
 };
 
-seedDatabase();
+// Only run immediately if this file is run directly
+if (process.argv[1]?.includes('seeder.js')) {
+    seedDatabase()
+        .then(() => process.exit(0))
+        .catch(() => process.exit(1));
+}
