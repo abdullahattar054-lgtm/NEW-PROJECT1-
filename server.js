@@ -33,7 +33,11 @@ connectDB();
 // DB Middleware to ensure connection before processing
 const dbMiddleware = async (req, res, next) => {
     // Skip DB check for OPTIONS (CORS preflight) and non-API routes
-    if (req.method === 'OPTIONS' || !req.originalUrl.startsWith('/api') || req.originalUrl === '/api/health') {
+    if (req.method === 'OPTIONS' || !req.originalUrl.startsWith('/api') || req.originalUrl.startsWith('/api/health')) {
+        // We still want to try connecting for /api/health to get accurate status
+        if (req.originalUrl.startsWith('/api/health')) {
+            await connectDB();
+        }
         return next();
     }
 
